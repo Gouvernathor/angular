@@ -75,18 +75,17 @@ Angular's emulated encapsulation mode supports a custom pseudo class, `::ng-deep
 **The Angular team strongly discourages new use of `::ng-deep`**. These APIs remain
 exclusively for backwards compatibility.
 
-How it works is that when you have `::ng-deep` in a CSS selector, the parts of the selector that come
-*after* `::ng-deep` will be matched with elements irrespective of whether they are inside the component's template.
-For instance:
-- a CSS rule whose selector is `p a` will match `<a>` elements inside the component's template, which are also
-  descendants of a `<p>` element that's itself also inside the component's template. That's Angular's default behavior.
-- `::ng-deep p a` will match `<a>` elements anywhere in the page, descendants of a `<p>` element anywhere in the page.
-  That effectively makes it a global style.
-- `p ::ng-deep a` will match `<a>` elements anywhere in the page, but only those that are descendents
-  of a `<p>` element inside the component's template.
-  So, effectively, the `<a>` can only be in the component's template, or among the component's children.
-- `:host ::ng-deep p a` will match `<a>` elements descendants of `<p>` elements, both being descendants of the component.
-  That means, which are both either in the component's template, or among its children.
+When a selector contains `::ng-deep`, Angular stops applying view-encapsulation boundaries after that point in the selector. Any part of the selector that follows `::ng-deep` can match elements outside the component’s template.
+
+For example:
+- a CSS rule selector is like `p a`, using the emulated encapsulation, will match `<a>` that are descendants of a `<p>` element,
+  both being within the component's own template.
+- A selector like `::ng-deep p a` will match `<a>` elements anywhere in the application, descendants of a `<p>` element anywhere in the application.
+  That effectively makes it behave like a global style.
+- In `p ::ng-deep a`, Arngular requires the `<p>` element to come from the component's own template, but the `<a>` element may be anywhere in the application.
+  So, in effect, the `<a>` element may be in the component's template, or in any of its projected or child content.
+- With `:host ::ng-deep p a`, both the `<a>` and `<p>` elements must be decendants of the component's host element.
+  They can come from the component's template or in the views of its child components, but not elsewhere in the app.
 
 ### ViewEncapsulation.ShadowDom
 
